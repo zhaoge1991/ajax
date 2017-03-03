@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+  <head>
+    <title></title>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <h1>注册新用户</h1>
+    <form action="3.php">
+    用户名：<input id="uname"><span id="unameMsg"></span><br>
+    密码名：<input id="upwd"><br>
+    邮箱名：<input id="mail"><br>
+    <input type="button" value="提交">
+    </form>
+    <script>  
+    //为输入框的失去焦点事件绑定监听函数
+    uname.onblur = function(){
+      var n = this.value;
+      if(!n){   //用户没有输入任何内容
+        return;
+      }
+      /**发起异步GET请求，询问服务器用户名是否已经存在**/
+      //1 创建xhr    
+      var xhr = new XMLHttpRequest();
+      //2 监听状态改变 01234，4最有价值 
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState===4){//响应完成
+          if(xhr.status===200){
+            console.log('响应完成且成功');
+            doResponse(xhr);
+          }
+          else {
+            console.log('响应完成但有问题');
+          }
+        }
+      }
+      //3 打开连接
+      xhr.open('GET','1_checkuname.php?uname='+n, true);
+      //4 发送请求
+      xhr.send(null);
+
+      //处理响应消息
+      function doResponse(xhr){
+        console.log('开始处理响应数据');
+        //console.log(xhr);
+        if(xhr.responseText==='cunzai'){
+          unameMsg.innerHTML = '该用户名已被占用';
+          unameMsg.style.color = '#b00';
+        }else if(xhr.responseText==='bucunzai'){
+          unameMsg.innerHTML = '该用户名可以使用';
+          unameMsg.style.color = '#0b0';
+        }else {
+          alert('未知的响应数据：'+xhr.responseText);
+        }
+      }
+    }
+    
+    </script>
+  </body>
+</html>

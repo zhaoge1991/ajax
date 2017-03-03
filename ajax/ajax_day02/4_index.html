@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+  <head>
+    <title></title>
+    <meta charset="utf-8">
+    <style>
+    #btLogin {
+      float: right;
+    }
+    .modal {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background: rgba(0,0,0,.5);
+      /*opacity: .5;*/
+      display: none;
+    }
+    .modal-dialog {
+      width: 300px;
+      margin: 100px auto;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 4px;
+      padding: 10px;
+      text-align: center;
+    }
+    </style>
+  </head>
+  <body>
+    <a href="#" id="btLogin">登录</a>
+    <h2>达内官网</h2>
+
+    <div class="modal"> <!--半透明遮罩-->
+      <div class="modal-dialog"> <!--尺寸和定位-->
+        <div class="modal-content"> <!--背景和边框-->
+          <h3>用户登录</h3>
+          用户名:  <input id="uname"><br>
+          密码名:  <input id="upwd"><br>
+          <input type="button" id="btSubmit" value="提交登录信息">
+        </div> 
+      </div> 
+    </div>
+    <script>
+    //单击“登录”按钮时，弹出模态对话框
+    btLogin.onclick = function(e){
+      e.preventDefault(); //阻止超链接跳转事件
+      var modal = document.querySelector('.modal');
+      modal.style.display = 'block';
+    }
+    //单击“提交登录信息”按钮,发起异步请求
+    btSubmit.onclick = function(){
+      var n = uname.value;
+      var p = upwd.value;
+      //1 创建xhr        
+      var xhr = new XMLHttpRequest();
+      //2 监听状态改变
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState===4){
+          if(xhr.status===200){
+            doResponse(xhr);
+          }else {
+            alert('响应完成但有问题');
+          }
+        }
+      }
+      //3 连接服务器
+      xhr.open('POST',`4_login.php`, true);
+      //3.5 修改请求头，设置请求主体的编码类型
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      //4 发送请求
+      xhr.send(`uname=${n}&upwd=${p}`);
+
+      function doResponse(xhr){
+        console.log('开始处理响应消息');
+        //console.log(xhr);
+        if(xhr.responseText=='succ'){
+          alert('登录成功');
+          document.querySelector('.modal').style.display = 'none';
+        }else if(xhr.responseText=='err'){
+          alert('用户名或密码错误');
+        }else {
+          alert('不可识别的响应数据');
+        }       
+      }
+    }
+    </script>
+  </body>
+</html>
